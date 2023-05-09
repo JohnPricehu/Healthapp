@@ -19,7 +19,7 @@ import ie.wit.healthapp.ui.auth.LoggedInViewModel
 import ie.wit.healthapp.ui.report.ReportViewModel
 import timber.log.Timber
 
-class AddFragmentFragment : Fragment() {
+class AddFragment : Fragment() {
 
     var totalAddd = 0
     private var _fragBinding: FragmentAddBinding? = null
@@ -75,7 +75,7 @@ class AddFragmentFragment : Fragment() {
             if(totalAddd >= layout.progressBar.max)
                 Toast.makeText(context,"Add duration Exceeded!", Toast.LENGTH_LONG).show()
             else {
-                val activityType = if(layout.activityType.checkedRadioButtonId == R.id.Run) "Direct" else "Paypal"
+                val activityType = if(layout.activityType.checkedRadioButtonId == R.id.Run) "Run" else "Swim"
                 totalAddd += duration
                 layout.totalSoFar.text = String.format(getString(R.string.totalSoFar),totalAddd)
                 layout.progressBar.progress = totalAddd
