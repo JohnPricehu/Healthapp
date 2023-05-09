@@ -37,7 +37,7 @@ class ActivityDetailFragment : Fragment() {
         fragBinding.editActivityButton.setOnClickListener {
             detailViewModel.updateActivity(
                 loggedInViewModel.liveFirebaseUser.value?.uid!!,
-                args.activityid, fragBinding.activityvm?.observableActivity!!.value!!
+                args.activityid, fragBinding.healthvm?.observableActivity!!.value!!
             )
             findNavController().navigateUp()
         }
@@ -56,7 +56,7 @@ class ActivityDetailFragment : Fragment() {
     private fun render() {
         fragBinding.editMessage.setText("A Message")
         fragBinding.editUpvotes.setText("0")
-        fragBinding.activityvm = detailViewModel
+        fragBinding.healthvm = detailViewModel
         Timber.i("Retrofit fragBinding.activityvm == $fragBinding.activityvm")
     }
 

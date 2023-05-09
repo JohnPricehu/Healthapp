@@ -1,22 +1,28 @@
-package ie.wit.healthapp.ui.activity
+package ie.wit.healthapp.ui.add
 
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import ie.wit.healthapp.R
-import ie.wit.healthapp.databinding.FragmentActivityBinding
+import ie.wit.healthapp.databinding.FragmentAddBinding
 import ie.wit.healthapp.models.ActivityModel
 import ie.wit.healthapp.ui.auth.LoggedInViewModel
-import ie.wit.healthapp.ui.add.AddViewModel
 import ie.wit.healthapp.ui.report.ReportViewModel
+import timber.log.Timber
 
-class AddFragment : Fragment() {
+class AddFragmentFragment : Fragment() {
 
-    private var _fragBinding: FragmentActivityBinding? = null
+    var totalAddd = 0
+    private var _fragBinding: FragmentAddBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     private val fragBinding get() = _fragBinding!!
     private lateinit var addViewModel: AddViewModel
@@ -29,26 +35,25 @@ class AddFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        _fragBinding = FragmentActivityBinding.inflate(inflater, container, false)
+        _fragBinding = FragmentAddBinding.inflate(inflater, container, false)
         val root = fragBinding.root
-
+        setupMenu()
         addViewModel = ViewModelProvider(this).get(AddViewModel::class.java)
         addViewModel.observableStatus.observe(viewLifecycleOwner, Observer {
                 status -> status?.let { render(status) }
         })
 
-        fragBinding.addActivityButton.setOnClickListener {
-            val activityDescription = fragBinding.activityDescription.text.toString()
-            if (activityDescription.isNotBlank()) {
-                val activity = ActivityModel(description = activityDescription,
-                    email = loggedInViewModel.liveFirebaseUser.value?.email!!)
-                addViewModel.addActivity(loggedInViewModel.liveFirebaseUser, activity)
-            } else {
-                Toast.makeText(context, getString(R.string.activityError), Toast.LENGTH_LONG).show()
-            }
-        }
+        fragBinding.progressBar.max = 10000
+        fragBinding.durationPicker.minValue = 1
+        fragBinding.durationPicker.maxValue = 1000
 
-        return root
+        fragBinding.durationPicker.setOnValueChangedListener { _, _, newVal ->
+            //Display the newly selected number to activityDuration
+            fragBinding.activityDuration.setText("$newVal")
+        }
+        setButtonListener(fragBinding)
+
+        return root;
     }
 
     private fun render(status: Boolean) {
@@ -59,12 +64,54 @@ class AddFragment : Fragment() {
                     //findNavController().popBackStack()
                 }
             }
-            false -> Toast.makeText(context, getString(R.string.activityError), Toast.LENGTH_LONG).show()
+            false -> Toast.makeText(context,getString(R.string.activityError),Toast.LENGTH_LONG).show()
         }
+    }
+
+    fun setButtonListener(layout: FragmentAddBinding) {
+        layout.addButton.setOnClickListener {
+            val duration = if (layout.activityDuration.text.isNotEmpty())
+                layout.activityDuration.text.toString().toInt() else layout.durationPicker.value
+            if(totalAddd >= layout.progressBar.max)
+                Toast.makeText(context,"Add duration Exceeded!", Toast.LENGTH_LONG).show()
+            else {
+                val activityType = if(layout.activityType.checkedRadioButtonId == R.id.Run) "Direct" else "Paypal"
+                totalAddd += duration
+                layout.totalSoFar.text = String.format(getString(R.string.totalSoFar),totalAddd)
+                layout.progressBar.progress = totalAddd
+                addViewModel.addActivity(loggedInViewModel.liveFirebaseUser,
+                    ActivityModel(activityType = activityType,duration = duration,
+                        email = loggedInViewModel.liveFirebaseUser.value?.email!!)) }
+        }
+    }
+
+    private fun setupMenu() {
+        (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
+            override fun onPrepareMenu(menu: Menu) {
+                // Handle for example visibility of menu items
+            }
+
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_add, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                // Validate and handle the selected menu item
+                return NavigationUI.onNavDestinationSelected(menuItem,
+                    requireView().findNavController())
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _fragBinding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        totalAddd = reportViewModel.observableActivitiesList.value!!.sumOf { it.duration }
+        fragBinding.progressBar.progress = totalAddd
+        fragBinding.totalSoFar.text = String.format(getString(R.string.totalSoFar),totalAddd)
     }
 }

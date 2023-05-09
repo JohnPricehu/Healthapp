@@ -2,7 +2,7 @@
     <string name="app_name">HealthAPP</string>
     <string name="healthTitle">Welcome Homer</string>
     <string name="healthSubtitle">Start exercising for your health!</string>
-    <string name="healthButton">Add</string>
+    <string name="addButton">Add</string>
     <string name="swim">Swim</string>
     <string name="run">Run</string>
     <string name="duration">Duration</string>

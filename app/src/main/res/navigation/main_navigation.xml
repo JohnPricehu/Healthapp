@@ -9,7 +9,7 @@
         android:id="@+id/addFragment"
         android:name="ie.wit.healthapp.ui.add.AddFragment"
         android:label="@string/action_add"
-        tools:layout="@layout/fragment_activity" >
+        tools:layout="@layout/fragment_add" >
         <action
             android:id="@+id/action_addFragment_to_reportFragment"
             app:destination="@id/reportFragment"

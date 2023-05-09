@@ -48,7 +48,7 @@
         app:layout_constraintVertical_bias="0.114" />
 
     <Button
-        android:id="@+id/healthButton"
+        android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -57,7 +57,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/healthButton"
+        android:text="@string/addButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.028"
@@ -85,14 +85,14 @@
         app:layout_constraintVertical_bias="0.276">
 
         <RadioButton
-            android:id="@+id/swim"
+            android:id="@+id/Swim"
             android:layout_width="97dp"
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="@string/swim" />
 
         <RadioButton
-            android:id="@+id/run"
+            android:id="@+id/Run"
             android:layout_width="97dp"
             android:layout_height="wrap_content"
             android:checked="false"
@@ -120,7 +120,7 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="349dp"
         android:layout_height="14dp"
-        android:layout_above="@+id/healthButton"
+        android:layout_above="@+id/addButton"
         android:layout_alignEnd="@+id/healthSubtitle"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
