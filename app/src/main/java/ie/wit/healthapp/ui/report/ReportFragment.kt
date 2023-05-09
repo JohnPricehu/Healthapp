@@ -46,7 +46,7 @@ class ReportFragment : Fragment(), HealthAppClickListener {
 
         fragBinding.recyclerView.layoutManager = LinearLayoutManager(activity)
         fragBinding.fab.setOnClickListener {
-            val action = ReportFragmentDirections.actionReportFragmentToActivityFragment()
+            val action = ReportFragmentDirections.actionReportFragmentToAddFragment()
             findNavController().navigate(action)
         }
         showLoader(loader, "Downloading Activities")
