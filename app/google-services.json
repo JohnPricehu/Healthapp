@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "936856882318",
+    "project_id": "healthapp-54654",
+    "storage_bucket": "healthapp-54654.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936856882318:android:4b53ad3d4847dcaff1cddf",
+        "android_client_info": {
+          "package_name": "ie.wit.healthapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936856882318-ibq0ppcil1r3t5lrnpl2tkqfckb9u5nn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWvHQZz_Q8GlHNd8r5P7RCU8IBwNz_nm8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "936856882318-ibq0ppcil1r3t5lrnpl2tkqfckb9u5nn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
