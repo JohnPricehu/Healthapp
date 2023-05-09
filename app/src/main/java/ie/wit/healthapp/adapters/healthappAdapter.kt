@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ie.wit.healthapp.R
-import ie.wit.healthapp.databinding.CardActivityBinding
+import ie.wit.healthapp.databinding.CardHealthappBinding
 import ie.wit.healthapp.models.ActivityModel
 
 interface HealthAppClickListener {
@@ -16,7 +16,7 @@ class HealthAppAdapter constructor(private var activities: ArrayList<ActivityMod
     : RecyclerView.Adapter<HealthAppAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
-        val binding = CardActivityBinding
+        val binding = CardHealthappBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
 
         return MainHolder(binding)
@@ -34,7 +34,7 @@ class HealthAppAdapter constructor(private var activities: ArrayList<ActivityMod
 
     override fun getItemCount(): Int = activities.size
 
-    inner class MainHolder(val binding: CardActivityBinding) :
+    inner class MainHolder(val binding: CardHealthappBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(activity: ActivityModel, listener: HealthAppClickListener) {
