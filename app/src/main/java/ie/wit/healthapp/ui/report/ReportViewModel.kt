@@ -1,5 +1,6 @@
 package ie.wit.healthapp.ui.report
 
+import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,7 @@ class ReportViewModel : ViewModel() {
 
     private val activitiesList =
         MutableLiveData<List<ActivityModel>>()
+    var readOnly = MutableLiveData(false)
 
     val observableActivitiesList: LiveData<List<ActivityModel>>
         get() = activitiesList
@@ -23,8 +25,9 @@ class ReportViewModel : ViewModel() {
 
     fun load() {
         try {
-            //ActivityManager.findAll(liveFirebaseUser.value?.email!!, activitiesList)
-            FirebaseDBManager.findAll(liveFirebaseUser.value?.uid!!, activitiesList)
+            //DonationManager.findAll(liveFirebaseUser.value?.email!!, activitiesList)
+            readOnly.value = false
+            FirebaseDBManager.findAll(liveFirebaseUser.value?.uid!!,activitiesList)
             Timber.i("Report Load Success : ${activitiesList.value.toString()}")
         }
         catch (e: Exception) {
@@ -32,10 +35,21 @@ class ReportViewModel : ViewModel() {
         }
     }
 
+    fun loadAll() {
+        try {
+            readOnly.value = true
+            FirebaseDBManager.findAll(activitiesList)
+            Timber.i("Report LoadAll Success : ${activitiesList.value.toString()}")
+        }
+        catch (e: Exception) {
+            Timber.i("Report LoadAll Error : $e.message")
+        }
+    }
+
     fun delete(userid: String, id: String) {
         try {
-            //ActivityManager.delete(userid, id)
-            FirebaseDBManager.delete(userid, id)
+            //DonationManager.delete(userid,id)
+            FirebaseDBManager.delete(userid,id)
             Timber.i("Report Delete Success")
         }
         catch (e: Exception) {

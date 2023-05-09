@@ -13,6 +13,9 @@ data class ActivityModel(
       var duration: Int = 0,
       var message: String = "a message",
       var upvotes: Int = 0,
+      var profilepic: String = "",
+      var latitude: Double = 0.0,
+      var longitude: Double = 0.0,
       var email: String? = "joe@bloggs.com")
       : Parcelable
 {
@@ -24,6 +27,9 @@ data class ActivityModel(
                   "duration" to duration,
                   "message" to message,
                   "upvotes" to upvotes,
+                  "profilepic" to profilepic,
+                  "latitude" to latitude,
+                  "longitude" to longitude,
                   "email" to email
             )
       }

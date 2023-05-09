@@ -3,12 +3,15 @@ package ie.wit.healthapp.ui.report
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -16,14 +19,16 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ie.wit.healthapp.R
-import ie.wit.healthapp.adapters.HealthAppAdapter
-import ie.wit.healthapp.adapters.HealthAppClickListener
+import ie.wit.healthapp.adapters.ActivityAdapter
+import ie.wit.healthapp.adapters.ActivityClickListener
 import ie.wit.healthapp.databinding.FragmentReportBinding
+import ie.wit.healthapp.main.HealthApp
 import ie.wit.healthapp.models.ActivityModel
 import ie.wit.healthapp.ui.auth.LoggedInViewModel
 import ie.wit.healthapp.utils.*
+import timber.log.Timber
 
-class ReportFragment : Fragment(), HealthAppClickListener {
+class ReportFragment : Fragment(), ActivityClickListener {
 
     private var _fragBinding: FragmentReportBinding? = null
     private val fragBinding get() = _fragBinding!!
@@ -35,9 +40,8 @@ class ReportFragment : Fragment(), HealthAppClickListener {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                                savedInstanceState: Bundle?
     ): View? {
         _fragBinding = FragmentReportBinding.inflate(inflater, container, false)
         val root = fragBinding.root
@@ -50,9 +54,8 @@ class ReportFragment : Fragment(), HealthAppClickListener {
             findNavController().navigate(action)
         }
         showLoader(loader, "Downloading Activities")
-        reportViewModel.observableActivitiesList.observe(
-            viewLifecycleOwner,
-            Observer { activities ->
+        reportViewModel.observableActivitiesList.observe(viewLifecycleOwner, Observer { 
+                activities ->
                 activities?.let {
                     render(activities as ArrayList<ActivityModel>)
                     hideLoader(loader)
@@ -65,12 +68,10 @@ class ReportFragment : Fragment(), HealthAppClickListener {
         val swipeDeleteHandler = object : SwipeToDeleteCallback(requireContext()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 showLoader(loader, "Deleting Activity")
-                val adapter = fragBinding.recyclerView.adapter as HealthAppAdapter
+                val adapter = fragBinding.recyclerView.adapter as ActivityAdapter
                 adapter.removeAt(viewHolder.adapterPosition)
-                reportViewModel.delete(
-                    reportViewModel.liveFirebaseUser.value?.uid!!,
-                    (viewHolder.itemView.tag as ActivityModel).uid!!
-                )
+                reportViewModel.delete(reportViewModel.liveFirebaseUser.value?.uid!!,
+                    (viewHolder.itemView.tag as ActivityModel).uid!!)
 
                 hideLoader(loader)
             }
@@ -89,6 +90,7 @@ class ReportFragment : Fragment(), HealthAppClickListener {
         return root
     }
 
+    
     private fun setupMenu() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onPrepareMenu(menu: Menu) {
@@ -96,13 +98,22 @@ class ReportFragment : Fragment(), HealthAppClickListener {
             }
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_add, menu)
+                menuInflater.inflate(R.menu.menu_report, menu)
+
+                val item = menu.findItem(R.id.toggleActivities) as MenuItem
+                item.setActionView(R.layout.togglebutton_layout)
+                val toggleActivities: SwitchCompat = item.actionView!!.findViewById(R.id.toggleButton)
+                toggleActivities.isChecked = false
+
+                toggleActivities.setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) reportViewModel.loadAll()
+                    else reportViewModel.load()
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 // Validate and handle the selected menu item
-                return NavigationUI.onNavDestinationSelected(
-                    menuItem,
+                return NavigationUI.onNavDestinationSelected(menuItem,
                     requireView().findNavController()
                 )
             }
@@ -110,7 +121,7 @@ class ReportFragment : Fragment(), HealthAppClickListener {
     }
 
     private fun render(activitiesList: ArrayList<ActivityModel>) {
-        fragBinding.recyclerView.adapter = HealthAppAdapter(activitiesList, this)
+        fragBinding.recyclerView.adapter = ActivityAdapter(activitiesList, this)
         if (activitiesList.isEmpty()) {
             fragBinding.recyclerView.visibility = View.GONE
             fragBinding.activitiesNotFound.visibility = View.VISIBLE
@@ -121,16 +132,19 @@ class ReportFragment : Fragment(), HealthAppClickListener {
     }
 
     override fun onActivityClick(activity: ActivityModel) {
-        val action =
-            ReportFragmentDirections.actionReportFragmentToActivityDetailFragment(activity.uid!!)
-        findNavController().navigate(action)
+        val action = ReportFragmentDirections.actionReportFragmentToActivityDetailFragment(activity.uid!!)
+        if(!reportViewModel.readOnly.value!!)
+            findNavController().navigate(action)
     }
 
     private fun setSwipeRefresh() {
         fragBinding.swiperefresh.setOnRefreshListener {
             fragBinding.swiperefresh.isRefreshing = true
-            showLoader(loader, "Downloading Activities")
-            reportViewModel.load()
+            showLoader(loader,"Downloading Donations")
+            if(reportViewModel.readOnly.value!!)
+                reportViewModel.loadAll()
+            else
+                reportViewModel.load()
         }
     }
 
@@ -148,6 +162,7 @@ class ReportFragment : Fragment(), HealthAppClickListener {
                 reportViewModel.load()
             }
         })
+        //hideLoader(loader)
     }
 
     override fun onDestroyView() {

@@ -11,11 +11,29 @@ object FirebaseDBManager : ActivityStore {
 
     var database: DatabaseReference = FirebaseDatabase.getInstance().reference
 
-    override fun findAll(activityList: MutableLiveData<List<ActivityModel>>) {
-        TODO("Not yet implemented")
+    override fun findAll(activitiesList: MutableLiveData<List<ActivityModel>>) {
+        database.child("activities")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.i("Firebase Activity error : ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val localList = ArrayList<ActivityModel>()
+                    val children = snapshot.children
+                    children.forEach {
+                        val activity = it.getValue(ActivityModel::class.java)
+                        localList.add(activity!!)
+                    }
+                    database.child("activities")
+                        .removeEventListener(this)
+
+                    activitiesList.value = localList
+                }
+            })
     }
 
-    override fun findAll(userid: String, activityList: MutableLiveData<List<ActivityModel>>) {
+    override fun findAll(userid: String, activitiesList: MutableLiveData<List<ActivityModel>>) {
 
         database.child("user-activities").child(userid)
             .addValueEventListener(object : ValueEventListener {
@@ -33,16 +51,12 @@ object FirebaseDBManager : ActivityStore {
                     database.child("user-activities").child(userid)
                         .removeEventListener(this)
 
-                    activityList.value = localList
+                    activitiesList.value = localList
                 }
             })
     }
 
-    override fun findById(
-        userid: String,
-        activityid: String,
-        activity: MutableLiveData<ActivityModel>
-    ) {
+    override fun findById(userid: String, activityid: String, activity: MutableLiveData<ActivityModel>) {
 
         database.child("user-activities").child(userid)
             .child(activityid).get().addOnSuccessListener {
@@ -53,10 +67,7 @@ object FirebaseDBManager : ActivityStore {
             }
     }
 
-    override fun create(
-        firebaseUser: MutableLiveData<FirebaseUser>,
-        activity: ActivityModel
-    ) {
+    override fun create(firebaseUser: MutableLiveData<FirebaseUser>, activity: ActivityModel) {
         Timber.i("Firebase DB Reference : $database")
 
         val uid = firebaseUser.value!!.uid
@@ -84,8 +95,36 @@ object FirebaseDBManager : ActivityStore {
         database.updateChildren(childDelete)
     }
 
-    override fun update(userId: String, activityId: String, activity: ActivityModel) {
-        TODO("Not yet implemented")
+    override fun update(userid: String, activityid: String, activity: ActivityModel) {
+
+        val activityValues = activity.toMap()
+
+        val childUpdate : MutableMap<String, Any?> = HashMap()
+        childUpdate["activities/$activityid"] = activityValues
+        childUpdate["user-activities/$userid/$activityid"] = activityValues
+
+        database.updateChildren(childUpdate)
+    }
+
+    fun updateImageRef(userid: String,imageUri: String) {
+
+        val userActivities = database.child("user-activities").child(userid)
+        val allActivities = database.child("activities")
+
+        userActivities.addListenerForSingleValueEvent(
+            object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {}
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach {
+                        //Update Users imageUri
+                        it.ref.child("profilepic").setValue(imageUri)
+                        //Update all activities that match 'it'
+                        val donation = it.getValue(ActivityModel::class.java)
+                        allActivities.child(donation!!.uid!!)
+                            .child("profilepic").setValue(imageUri)
+                    }
+                }
+            })
     }
 }
 

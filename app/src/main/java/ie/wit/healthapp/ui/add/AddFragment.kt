@@ -16,18 +16,20 @@ import ie.wit.healthapp.R
 import ie.wit.healthapp.databinding.FragmentAddBinding
 import ie.wit.healthapp.models.ActivityModel
 import ie.wit.healthapp.ui.auth.LoggedInViewModel
+import ie.wit.healthapp.ui.map.MapsViewModel
 import ie.wit.healthapp.ui.report.ReportViewModel
 import timber.log.Timber
 
 class AddFragment : Fragment() {
 
-    var totalAddd = 0
+    var totalAdded = 0
     private var _fragBinding: FragmentAddBinding? = null
     // This property is only valid between onCreateView and onDestroyView.
     private val fragBinding get() = _fragBinding!!
     private lateinit var addViewModel: AddViewModel
     private val reportViewModel: ReportViewModel by activityViewModels()
     private val loggedInViewModel : LoggedInViewModel by activityViewModels()
+    private val mapsViewModel: MapsViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,16 +74,19 @@ class AddFragment : Fragment() {
         layout.addButton.setOnClickListener {
             val duration = if (layout.activityDuration.text.isNotEmpty())
                 layout.activityDuration.text.toString().toInt() else layout.durationPicker.value
-            if(totalAddd >= layout.progressBar.max)
+            if(totalAdded >= layout.progressBar.max)
                 Toast.makeText(context,"Add duration Exceeded!", Toast.LENGTH_LONG).show()
             else {
                 val activityType = if(layout.activityType.checkedRadioButtonId == R.id.Run) "Run" else "Swim"
-                totalAddd += duration
-                layout.totalSoFar.text = String.format(getString(R.string.totalSoFar),totalAddd)
-                layout.progressBar.progress = totalAddd
+                totalAdded += duration
+                layout.totalSoFar.text = String.format(getString(R.string.totalSoFar),totalAdded)
+                layout.progressBar.progress = totalAdded
                 addViewModel.addActivity(loggedInViewModel.liveFirebaseUser,
                     ActivityModel(activityType = activityType,duration = duration,
-                        email = loggedInViewModel.liveFirebaseUser.value?.email!!)) }
+                        email = loggedInViewModel.liveFirebaseUser.value?.email!!,
+                        latitude = mapsViewModel.currentLocation.value!!.latitude,
+                        longitude = mapsViewModel.currentLocation.value!!.longitude))
+            }
         }
     }
 
@@ -110,8 +115,8 @@ class AddFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        totalAddd = reportViewModel.observableActivitiesList.value!!.sumOf { it.duration }
-        fragBinding.progressBar.progress = totalAddd
-        fragBinding.totalSoFar.text = String.format(getString(R.string.totalSoFar),totalAddd)
+        totalAdded = reportViewModel.observableActivitiesList.value!!.sumOf { it.duration }
+        fragBinding.progressBar.progress = totalAdded
+        fragBinding.totalSoFar.text = String.format(getString(R.string.totalSoFar),totalAdded)
     }
 }
