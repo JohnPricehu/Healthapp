@@ -91,7 +91,7 @@ class MapsFragment : Fragment() {
 
                 mapsViewModel.map.addMarker(
                     MarkerOptions().position(LatLng(it.latitude, it.longitude))
-                        .title("${it.activityType} €${it.duration}")
+                        .title("${it.activityType} ${it.duration} mins")
                         .snippet(it.message)
                         .icon(BitmapDescriptorFactory.defaultMarker(markerColour ))
                 )

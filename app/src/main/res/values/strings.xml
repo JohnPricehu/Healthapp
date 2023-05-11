@@ -5,6 +5,8 @@
     <string name="addButton">Add</string>
     <string name="swim">Swim</string>
     <string name="run">Run</string>
+    <string name="yoga">Yoga</string>
+    <string name="basketball">Basketball</string>
     <string name="duration">Duration</string>
     <string name="total">Total so Far : </string>
     <string name="totalSoFar">%1$d mins</string>

@@ -51,7 +51,6 @@ class ActivityAdapter constructor(private var activities: ArrayList<ActivityMode
                 .transform(customTransformation())
                 .centerCrop()
                 .into(binding.imageIcon)
-            binding.imageIcon.setImageResource(R.mipmap.ic_launcher_round)
             binding.root.setOnClickListener { listener.onActivityClick(activity) }
             binding.executePendingBindings()
         }

@@ -77,7 +77,13 @@ class AddFragment : Fragment() {
             if(totalAdded >= layout.progressBar.max)
                 Toast.makeText(context,"Add duration Exceeded!", Toast.LENGTH_LONG).show()
             else {
-                val activityType = if(layout.activityType.checkedRadioButtonId == R.id.Run) "Run" else "Swim"
+                val activityType = when(layout.activityType.checkedRadioButtonId) {
+                    R.id.Run -> "Run"
+                    R.id.Swim -> "Swim"
+                    R.id.Yoga -> "Yoga"
+                    R.id.Basketball -> "Basketball"
+                    else -> ""
+                }
                 totalAdded += duration
                 layout.totalSoFar.text = String.format(getString(R.string.totalSoFar),totalAdded)
                 layout.progressBar.progress = totalAdded
