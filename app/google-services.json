@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "936856882318-he2jjqu1ln2ecdihi4bvt7ta2ji1d6ci.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ie.wit.healthapp",
+            "certificate_hash": "944d6565d6f6f15f5226f0027a6c42e3c002ee13"
+          }
+        },
+        {
           "client_id": "936856882318-d8vnagiria2k3g1snshjcnidn21t1233.apps.googleusercontent.com",
           "client_type": 3
         }
