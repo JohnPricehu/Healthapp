@@ -114,14 +114,14 @@ class ReportFragment : Fragment(), ActivityClickListener {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 // Validate and handle the selected menu item
                 return NavigationUI.onNavDestinationSelected(menuItem,
-                    requireView().findNavController()
-                )
+                    requireView().findNavController())
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun render(activitiesList: ArrayList<ActivityModel>) {
-        fragBinding.recyclerView.adapter = ActivityAdapter(activitiesList, this)
+        fragBinding.recyclerView.adapter = ActivityAdapter(activitiesList, this,
+            reportViewModel.readOnly.value!!)
         if (activitiesList.isEmpty()) {
             fragBinding.recyclerView.visibility = View.GONE
             fragBinding.activitiesNotFound.visibility = View.VISIBLE
