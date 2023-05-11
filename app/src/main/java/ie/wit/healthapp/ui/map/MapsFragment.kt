@@ -79,11 +79,11 @@ class MapsFragment : Fragment() {
         mapFragment?.getMapAsync(callback)
     }
 
-    private fun render(donationsList: ArrayList<ActivityModel>) {
+    private fun render(activitiesList: ArrayList<ActivityModel>) {
         var markerColour: Float
-        if (donationsList.isNotEmpty()) {
+        if (activitiesList.isNotEmpty()) {
             mapsViewModel.map.clear()
-            donationsList.forEach {
+            activitiesList.forEach {
                 markerColour = if(it.email.equals(this.reportViewModel.liveFirebaseUser.value!!.email))
                     BitmapDescriptorFactory.HUE_AZURE + 5
                 else

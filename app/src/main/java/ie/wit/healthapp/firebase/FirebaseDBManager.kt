@@ -119,8 +119,8 @@ object FirebaseDBManager : ActivityStore {
                         //Update Users imageUri
                         it.ref.child("profilepic").setValue(imageUri)
                         //Update all activities that match 'it'
-                        val donation = it.getValue(ActivityModel::class.java)
-                        allActivities.child(donation!!.uid!!)
+                        val activity = it.getValue(ActivityModel::class.java)
+                        allActivities.child(activity!!.uid!!)
                             .child("profilepic").setValue(imageUri)
                     }
                 }

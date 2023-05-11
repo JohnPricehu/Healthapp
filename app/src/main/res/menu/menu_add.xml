@@ -3,13 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/addFragment"
+        android:id="@+id/reportFragment"
         android:orderInCategory="100"
-        android:title="@string/action_add"
+        android:title="@string/action_report"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/toggleActivities"
-        android:title=""
-        app:actionLayout="@layout/togglebutton_layout"
-        app:showAsAction="always" />
 </menu>

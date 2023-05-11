@@ -50,7 +50,7 @@ class FirebaseAuthManager(application: Application) {
     }
 
     fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-        Timber.i( "DonationX firebaseAuthWithGoogle:" + acct.id!!)
+        Timber.i( "HealthApp firebaseAuthWithGoogle:" + acct.id!!)
 
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         firebaseAuth!!.signInWithCredential(credential)

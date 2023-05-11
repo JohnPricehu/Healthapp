@@ -140,7 +140,7 @@ class ReportFragment : Fragment(), ActivityClickListener {
     private fun setSwipeRefresh() {
         fragBinding.swiperefresh.setOnRefreshListener {
             fragBinding.swiperefresh.isRefreshing = true
-            showLoader(loader,"Downloading Donations")
+            showLoader(loader,"Downloading Activities")
             if(reportViewModel.readOnly.value!!)
                 reportViewModel.loadAll()
             else
