@@ -11,7 +11,7 @@ data class ActivityModel(
       var uid: String? = "",
       var activityType: String = "N/A",
       var duration: Int = 0,
-      var message: String = "a message",
+      var message: String = "",
       var upvotes: Int = 0,
       var profilepic: String = "",
       var latitude: Double = 0.0,

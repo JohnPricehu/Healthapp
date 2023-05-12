@@ -74,6 +74,7 @@ class AddFragment : Fragment() {
         layout.addButton.setOnClickListener {
             val duration = if (layout.activityDuration.text.isNotEmpty())
                 layout.activityDuration.text.toString().toInt() else layout.durationPicker.value
+            val message = layout.activityMessage.text.toString()
             if(totalAdded >= layout.progressBar.max)
                 Toast.makeText(context,"Add duration Exceeded!", Toast.LENGTH_LONG).show()
             else {
@@ -88,7 +89,7 @@ class AddFragment : Fragment() {
                 layout.totalSoFar.text = String.format(getString(R.string.totalSoFar),totalAdded)
                 layout.progressBar.progress = totalAdded
                 addViewModel.addActivity(loggedInViewModel.liveFirebaseUser,
-                    ActivityModel(activityType = activityType,duration = duration,
+                    ActivityModel(activityType = activityType,duration = duration,message = message,
                         email = loggedInViewModel.liveFirebaseUser.value?.email!!,
                         latitude = mapsViewModel.currentLocation.value!!.latitude,
                         longitude = mapsViewModel.currentLocation.value!!.longitude))
