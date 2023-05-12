@@ -36,7 +36,9 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
- 	    <activity android:name=".ui.home.Home">
+ 	    <activity android:name=".ui.home.Home"
+            android:theme="@style/Theme.HealthApp.NoActionBar"
+            >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

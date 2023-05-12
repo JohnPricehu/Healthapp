@@ -1,10 +1,12 @@
 package ie.wit.healthapp.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -32,6 +34,10 @@ import ie.wit.healthapp.ui.auth.Login
 import ie.wit.healthapp.ui.map.MapsViewModel
 import ie.wit.healthapp.utils.*
 import timber.log.Timber
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.MenuItemCompat
+import androidx.appcompat.widget.SwitchCompat
+
 
 class Home : AppCompatActivity() {
 
@@ -46,6 +52,8 @@ class Home : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 设置应用的默认夜间模式为跟随系统
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
 
         homeBinding = HomeBinding.inflate(layoutInflater)
         setContentView(homeBinding.root)
@@ -69,6 +77,9 @@ class Home : AppCompatActivity() {
         if(checkLocationPermissions(this)) {
             mapsViewModel.updateCurrentLocation()
         }
+
+
+
 //        navController.addOnDestinationChangedListener { _, destination, arguments ->
 //            when(destination.id) {
 //                R.id.reportFragment -> {
@@ -173,6 +184,58 @@ class Home : AppCompatActivity() {
                 }
             }
     }
+
+    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        try {
+        menuInflater.inflate(R.menu.nav_drawer_menu, menu)
+
+        val nightModeItem = menu.findItem(R.id.night_mode)
+        val view = MenuItemCompat.getActionView(nightModeItem)
+        val switch = view.findViewById<SwitchCompat>(R.id.toggleButton)
+
+        // 打印日志
+        Timber.d("Switch: $switch")
+
+        // 获取存储在 SharedPreferences 中的模式设置
+        val sharedPreferences = getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+        val isNightModeEnabled = sharedPreferences.getBoolean("NightMode", false)
+        // 读取 SharedPreferences
+        Timber.d("Night Mode from SharedPreferences: $isNightModeEnabled")
+
+        // 根据获取的模式设置来设置应用的模式和 Switch 控件的状态
+        if (isNightModeEnabled) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            switch.isChecked = true
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            switch.isChecked = false
+        }
+
+        switch.setOnCheckedChangeListener { _, isChecked ->
+            val editor = sharedPreferences.edit()
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                editor.putBoolean("NightMode", true)
+                Timber.d("Switched to Night Mode")  // 打印日志
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                editor.putBoolean("NightMode", false)
+                Timber.d("Switched to Day Mode")  // 打印日志
+            }
+            editor.apply()
+            // 打印日志
+            Timber.d("Set Night Mode to SharedPreferences: $isChecked")
+            Timber.d("Before recreate")  // 打印日志
+            recreate()  // 重建 Activity
+            Timber.d("After recreate")  // 打印日志
+        }
+        } catch (e: Exception) {
+            Timber.e(e, "Error in onCreateOptionsMenu")
+        }
+
+        return super.onCreateOptionsMenu(menu)
+    }*/
+
 
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
