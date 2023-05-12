@@ -58,4 +58,9 @@
             android:id="@+id/action_mapsFragment_to_activityDetailFragment"
             app:destination="@id/activityDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/newsFragment"
+        android:name="ie.wit.healthapp.ui.news.NewsFragment"
+        android:label="News"
+        tools:layout="@layout/fragment_news" />
 </navigation>
