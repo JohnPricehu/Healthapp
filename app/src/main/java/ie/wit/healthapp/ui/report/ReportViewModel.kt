@@ -35,6 +35,16 @@ class ReportViewModel : ViewModel() {
         }
     }
 
+    fun loadOnMap() {
+        try {
+            readOnly.value = true
+            FirebaseDBManager.findOnMap(activitiesList, liveFirebaseUser)
+            Timber.i("Report LoadOnMap Success : ${activitiesList.value.toString()}")
+        }
+        catch (e: Exception) {
+            Timber.i("Report LoadOnMap Error : $e.message")
+        }
+    }
     fun loadAll() {
         try {
             readOnly.value = true

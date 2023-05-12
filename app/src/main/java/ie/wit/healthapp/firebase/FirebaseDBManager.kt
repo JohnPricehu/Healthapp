@@ -56,6 +56,32 @@ object FirebaseDBManager : ActivityStore {
             })
     }
 
+    fun findOnMap(activitiesList: MutableLiveData<List<ActivityModel>>, liveFirebaseUser: MutableLiveData<FirebaseUser>) {
+        database.child("activities")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.i("Firebase Activity error : ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val localList = ArrayList<ActivityModel>()
+                    val children = snapshot.children
+                    children.forEach {
+                        val activity = it.getValue(ActivityModel::class.java)
+                        if (activity != null && (activity.email == liveFirebaseUser.value?.email || activity.duration > 30)) {
+                            localList.add(activity)
+                        }
+                    }
+                    database.child("activities")
+                        .removeEventListener(this)
+
+                    activitiesList.value = localList
+                }
+            })
+    }
+
+
+
     override fun findById(userid: String, activityid: String, activity: MutableLiveData<ActivityModel>) {
 
         database.child("user-activities").child(userid)

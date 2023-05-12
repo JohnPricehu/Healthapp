@@ -2,9 +2,13 @@ package ie.wit.healthapp.ui.map
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.ContentValues.TAG
+import android.content.res.Configuration
+import android.content.res.Resources
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.MenuHost
@@ -21,6 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import ie.wit.healthapp.R
 import ie.wit.healthapp.models.ActivityModel
@@ -40,6 +45,27 @@ class MapsFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private val callback = OnMapReadyCallback { googleMap ->
         mapsViewModel.map = googleMap
+
+        // Set the map style based on the current device theme.
+        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val styleResId = if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            R.raw.map_style_dark
+        } else {
+            R.raw.map_style_default
+        }
+        try {
+            val success = googleMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                    requireContext(), styleResId
+                )
+            )
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.")
+            }
+        } catch (e: Resources.NotFoundException) {
+            Log.e(TAG, "Can't find style. Error: ", e)
+        }
+
         mapsViewModel.map.isMyLocationEnabled = true
         mapsViewModel.currentLocation.observe(viewLifecycleOwner) {
             val loc = LatLng(
@@ -91,7 +117,7 @@ class MapsFragment : Fragment() {
 
                 mapsViewModel.map.addMarker(
                     MarkerOptions().position(LatLng(it.latitude, it.longitude))
-                        .title("${it.activityType} ${it.duration} mins")
+                        .title("${it.email} completed ${it.activityType} ${it.duration} mins")
                         .snippet(it.message)
                         .icon(BitmapDescriptorFactory.defaultMarker(markerColour ))
                 )
@@ -115,7 +141,7 @@ class MapsFragment : Fragment() {
 
                 toggleActivities.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) reportViewModel.loadAll()
-                    else reportViewModel.load()
+                    else reportViewModel.loadOnMap()
                 }
             }
 
@@ -133,7 +159,7 @@ class MapsFragment : Fragment() {
         loggedInViewModel.liveFirebaseUser.observe(viewLifecycleOwner) {
                 firebaseUser -> if (firebaseUser != null) {
                 reportViewModel.liveFirebaseUser.value = firebaseUser
-                reportViewModel.load()
+                reportViewModel.loadOnMap()
             }
         }
     }
